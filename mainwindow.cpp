@@ -10,34 +10,32 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    //ui->webView->show();
-    ui->webView->settings()->setAttribute(QWebSettings::JavascriptEnabled,true);
-    ui->webView->settings()->setAttribute(QWebSettings::PluginsEnabled,true);
-
+    ui->webView->show();
     myGrdStn=new MyGroundStation(this);
+    initParam();//初始化界面参数
+    initConnect();//初始化信号和槽连接
+}
 
-    ui->pushButton->setEnabled(false);
-    ui->pushButton_2->setEnabled(false);
-
-    connect(ui->spinBox,SIGNAL(valueChanged(int)),this->myGrdStn,SLOT(setQuadNum(int)));
-    connect(this->myGrdStn,SIGNAL(setQuadText(QString)),ui->textBrowser,SLOT(append(QString)));
+void MainWindow::initConnect()
+{
+    connect(ui->spinBox,SIGNAL(valueChanged(int)),this->myGrdStn,SLOT(setQuadNum(int)));//待删，测试用
+    connect(this->myGrdStn,SIGNAL(setQuadText(QString)),ui->textBrowser,SLOT(append(QString)));//刷新界面文本框信息
+    connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(addJavaScriptObject()));//地图刷新调取暴露类参数
     connect(ui->pushButton_3,SIGNAL(clicked(bool)),ui->pushButton,SLOT(setDisabled(bool)));//数量确认之后允许起飞
     connect(ui->pushButton,SIGNAL(clicked(bool)),ui->pushButton_2,SLOT(setDisabled(bool)));//起飞之后允许返航
+}
+
+void MainWindow::initParam()
+{
+    ui->pushButton->setEnabled(false);//起飞按钮，默认是灰的
+    ui->pushButton_2->setEnabled(false);//返航按钮，默认是灰的
+    ui->webView->settings()->setAttribute(QWebSettings::JavascriptEnabled,true);//使能javascript暴露
+    ui->webView->settings()->setAttribute(QWebSettings::PluginsEnabled,true);
     addJavaScriptObject();
-    connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(addJavaScriptObject()));
-    connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(slotTest()));
     ui->webView->setUrl(QUrl("/home/gxd/Qt/MultiGroundStation/htmlapi/baiduapi.html"));
 
-
 }
 
-
-
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
 
 void MainWindow::addJavaScriptObject()
 {;
@@ -47,4 +45,11 @@ void MainWindow::addJavaScriptObject()
 void MainWindow::slotTest()
 {
     std::cout<<"SUCCEED!"<<std::endl;
+}
+
+
+
+MainWindow::~MainWindow()
+{
+    delete ui;
 }

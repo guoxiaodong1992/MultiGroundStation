@@ -21,6 +21,8 @@ private:
     int location;
 public:
     explicit MainWindow(QWidget *parent = 0);
+    void initConnect();
+    void initParam();
     ~MainWindow();
 public slots:
     void slotTest();
