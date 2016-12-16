@@ -21,13 +21,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->pushButton_2->setEnabled(false);
 
     connect(ui->spinBox,SIGNAL(valueChanged(int)),this->myGrdStn,SLOT(setQuadNum(int)));
-    connect(this->myGrdStn,SIGNAL(setQuadNumText(QString)),ui->textBrowser,SLOT(append(QString)));
+    connect(this->myGrdStn,SIGNAL(setQuadText(QString)),ui->textBrowser,SLOT(append(QString)));
     connect(ui->pushButton_3,SIGNAL(clicked(bool)),ui->pushButton,SLOT(setDisabled(bool)));//数量确认之后允许起飞
     connect(ui->pushButton,SIGNAL(clicked(bool)),ui->pushButton_2,SLOT(setDisabled(bool)));//起飞之后允许返航
     addJavaScriptObject();
     connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(addJavaScriptObject()));
     connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()),this, SLOT(slotTest()));
-    ui->webView->setUrl(QUrl("/home/gxd/htmlapi/baiduapi.html"));
+    ui->webView->setUrl(QUrl("/home/gxd/Qt/MultiGroundStation/htmlapi/baiduapi.html"));
 
 
 }
@@ -40,8 +40,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::addJavaScriptObject()
-{
-    std::cout<<"SUCCEED!"<<std::endl;
+{;
     this->ui->webView->page()->mainFrame()->addToJavaScriptWindowObject(QString("myGrdStn"),this->myGrdStn);
 }
 

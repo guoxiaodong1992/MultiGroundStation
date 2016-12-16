@@ -13,6 +13,12 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include <QLabel>
+#include <vector>
+#include <map>
+#include "MyQuad.h"
+#include "MyDataProcess.h"
+
+using namespace std;
 
 
 class MyGroundStation: public QObject
@@ -20,15 +26,17 @@ class MyGroundStation: public QObject
    Q_OBJECT
    public:
         explicit MyGroundStation(QObject *parent=0);
+        void decode_InitShake();
    signals:
-        void setQuadNumText(QString text);
+        void setQuadText(QString text);
    public slots:
         void setQuadNum(int);
         int  js(){return test;}
    private:
         int quadNum;
         float test;
-
+        map<u16,MyQuad> myQuad;
+        unsigned char a[100];
 };
 
 

@@ -17,18 +17,22 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     MsgCode.cpp \
     MyDataProcess.cpp \
-    MyGroundStation.cpp
+    MyGroundStation.cpp \
+    MyQuad.cpp
 
-HEADERS  += mainwindow.h \
+HEADERS  += \
     MsgCode.h \
     MyDataProcess.h \
     msg/GPS.h \
     msg/Posi.h \
     msg/ShapeConfig.h \
-    MyGroundStation.h
+    MyGroundStation.h \
+    MyQuad.h \
+    mainwindow.h
 
 FORMS    += mainwindow.ui
 
-DISTFILES +=
+DISTFILES += \
+    htmlapi/baiduapi.html
 
 INCLUDEPATH += /opt/ros/kinetic/include
