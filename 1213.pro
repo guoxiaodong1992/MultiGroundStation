@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     MsgCode.cpp \
     MyDataProcess.cpp \
     MyGroundStation.cpp \
-    MyQuad.cpp
+    MyQuad.cpp \
+    Queue.cpp \
+    ZigbeeAdapter.cpp
 
 HEADERS  += \
     MsgCode.h \
@@ -28,7 +30,12 @@ HEADERS  += \
     msg/ShapeConfig.h \
     MyGroundStation.h \
     MyQuad.h \
-    mainwindow.h
+    mainwindow.h \
+    ZigbeeAdapter.h \
+    TypeDef.h \
+    Queue.h \
+    SerialHardDriver.h \
+    HardDriver.h
 
 FORMS    += mainwindow.ui
 

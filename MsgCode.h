@@ -16,7 +16,7 @@ using namespace zigbee;
 #define msgID_TakeOff           'D'
 #define msgID_TakeOffAck        'D'
 
-typedef struct MsgHeader
+struct MsgHeader
 {
   unsigned char head;      //0xFD
   unsigned char length;
@@ -27,7 +27,7 @@ typedef struct MsgHeader
   unsigned char reserve1;
   unsigned char reserve2;
   unsigned char reserve3;
-}MsgHeader;
+};
 
 int encode_InitShake(GPS &Tmp, unsigned char *a);
 

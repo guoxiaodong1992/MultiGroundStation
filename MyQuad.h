@@ -1,4 +1,4 @@
-/** @file MyGroundStation.h
+/** @file MyQuad.h
  *  @version 1.0.0
  *  @date Sep 15th, 2016
  *  @author Guo Xiaodong
