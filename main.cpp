@@ -1,9 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QPushButton>
-#include "ZigbeeAdapter.h"
 
-ZigbeeAdapter *adapter;
 
 int main(int argc, char *argv[])
 {

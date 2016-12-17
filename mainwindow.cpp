@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <string.h>
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,10 +8,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-    ui->webView->show();
+
     myGrdStn=new MyGroundStation(this);
-    initParam();//初始化界面参数
+    initUi();//初始化界面参数
     initConnect();//初始化信号和槽连接
 }
 
@@ -25,14 +23,16 @@ void MainWindow::initConnect()
     connect(ui->pushButton,SIGNAL(clicked(bool)),ui->pushButton_2,SLOT(setDisabled(bool)));//起飞之后允许返航
 }
 
-void MainWindow::initParam()
+void MainWindow::initUi()
 {
+    ui->setupUi(this);
     ui->pushButton->setEnabled(false);//起飞按钮，默认是灰的
     ui->pushButton_2->setEnabled(false);//返航按钮，默认是灰的
     ui->webView->settings()->setAttribute(QWebSettings::JavascriptEnabled,true);//使能javascript暴露
     ui->webView->settings()->setAttribute(QWebSettings::PluginsEnabled,true);
     addJavaScriptObject();
     ui->webView->setUrl(QUrl("/home/gxd/Qt/MultiGroundStation/htmlapi/baiduapi.html"));
+    ui->webView->show();
 
 }
 
@@ -48,8 +48,8 @@ void MainWindow::slotTest()
 }
 
 
-
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete myGrdStn;
 }

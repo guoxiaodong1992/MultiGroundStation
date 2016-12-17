@@ -19,8 +19,7 @@ SOURCES += main.cpp\
     MyDataProcess.cpp \
     MyGroundStation.cpp \
     MyQuad.cpp \
-    Queue.cpp \
-    ZigbeeAdapter.cpp
+    Queue.cpp
 
 HEADERS  += \
     MsgCode.h \
@@ -31,8 +30,6 @@ HEADERS  += \
     MyGroundStation.h \
     MyQuad.h \
     mainwindow.h \
-    ZigbeeAdapter.h \
-    TypeDef.h \
     Queue.h \
     SerialHardDriver.h \
     HardDriver.h

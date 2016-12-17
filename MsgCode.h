@@ -16,7 +16,14 @@ using namespace zigbee;
 #define msgID_TakeOff           'D'
 #define msgID_TakeOffAck        'D'
 
-struct MsgHeader
+
+struct SDKFilter
+{
+  int recvIndex;
+  unsigned char recvBuf[1024];
+};
+
+struct msgHeader
 {
   unsigned char head;      //0xFD
   unsigned char length;

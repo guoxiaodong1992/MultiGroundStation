@@ -9,6 +9,7 @@
 #include "MyDataProcess.h"
 #include "MyGroundStation.h"
 
+
 namespace Ui {
 class MainWindow;
 }
@@ -22,7 +23,7 @@ private:
 public:
     explicit MainWindow(QWidget *parent = 0);
     void initConnect();
-    void initParam();
+    void initUi();
     ~MainWindow();
 public slots:
     void slotTest();

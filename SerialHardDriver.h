@@ -236,15 +236,12 @@ public:
 
   void init()
   {
-//      API_LOG(this, STATUS_LOG, "going to open device %s with baudrate %u...\n",
-//              m_device.c_str(), m_baudrate);
-      cout<<"going to open device"<<m_device.c_str()<<"with baudrate "<<m_baudrate<<endl;
+
+      cout<<"going to open device"<<m_device.c_str()<<" with baudrate "<<m_baudrate<<endl;
       if( _serialStart(m_device.c_str(), m_baudrate) < 0 ) {
           _serialClose();
-          //API_LOG(this, ERROR_LOG, "...fail to start serial\n");
           cout<<"...fail to start serial"<<endl;
       } else {
-          //API_LOG(this, STATUS_LOG, "...succeed to start serial\n");
           cout<<"...succeed to start serial"<<endl;
       }
   }
