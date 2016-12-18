@@ -109,7 +109,7 @@ int encode_CmdAck(unsigned char msgID,unsigned char targetID,unsigned char *a)
 	a[length]=CountSum(a,length);length++;
 
 	/**补上data length**/
-	a[1] = (unsigned char)length-4;
+    a[1] = (unsigned char)length-4;//为什么是减去4?此处的数据长度指的是数据区的长度
 
 	return length;
 }

@@ -105,6 +105,7 @@ void MyGroundStation::readPoll()
     byteHandler(buf[i]);			//对每一位数据处理函数
   }
 }
+
 int MyGroundStation::checkData()//Reserved to be modified
 {
     return 0;
@@ -135,18 +136,18 @@ void MyGroundStation::byteHandler(const uint8_t in_data)
     {
         if(in_data == 0xFD)
         {
-            cout<<"receive 0xFE"<<endl;
+            cout<<"receive 0xFD"<<endl;
             filter.recvBuf[filter.recvIndex] = in_data;
             filter.recvIndex++;
         }
     }
     else	//已经顺利收到包头
     {
-        filter.recvBuf[filter.recvIndex] = in_data;
+        filter.recvBuf[filter.recvIndex] = in_data;//
         filter.recvIndex++;
         if(filter.recvIndex >= 2)												//已收到数据包长度位
         {
-            if(filter.recvIndex == filter.recvBuf[1])     //长度收满,长度校验完成
+            if(filter.recvIndex == filter.recvBuf[1]+6)     //在Zigbee点对点模式下，真实的数据长度为数据去长度+8，（前面4+后面2）长度收满,长度校验完成
             {
                 handleData();		//数据处理 校验 过滤 解码 消息发布等
                 cout<<"Finish Receive"<<endl;
@@ -164,7 +165,7 @@ void MyGroundStation::decodeInitShake()
   u16 temp;
   unsigned char *a=filter.recvBuf;
   DecodeU16Data(&temp,a+8);//29 is reserved to be changed to a var
-  myQuad[temp].global_position.ID = temp;
+  myQuad[temp].global_position.ID = temp;//UAV ID
   DecodeDoubleData(&myQuad[temp].global_position.latitude,a+length);length+=1;
   DecodeDoubleData(&myQuad[temp].global_position.longitude,a+length);length+=1;
   DecodeDoubleData(&myQuad[temp].global_position.altitude,a+length);length+=1;
@@ -175,6 +176,46 @@ void MyGroundStation::decodeInitShake()
       str.setNum(quadNum);
       emit setQuadText(QString("Info: Quad Add In: ")+str+QString(" !"));
   }
+  unsigned char b[50];//50 Reserved to be define
+  int len;
+  len=encode_CmdAck(msgID_InitShakeAck,temp,b);
+  for(int i=0;i<len;i++)
+  {
+      send_queue->EnQueue(b[i]);
+  }
+}
+
+
+int MyGroundStation::encodeCmdAck(unsigned char msgID,unsigned char targetID,unsigned char *a)
+{
+    int length = 0;
+
+    a[length] = 0xFD;  length++;							//包头
+    a[length] = 0;   	length++;								//data length
+
+    if(targetID!=0xff)
+    {
+        a[length] = 0x00;  length++;
+        a[length] = targetID; length++;
+    }
+    else
+    {
+        a[length] = 0xff;  length++;
+        a[length] = 0xff; length++;
+    }
+
+    a[length] = msgID; length++;		//message ID
+    //////数据////////////
+  a[length] = 'a';length++;
+  a[length] = 'c';length++;
+  a[length] = 'k';length++;
+    ////计算校验和//////
+    a[length]=CountSum(a,length);length++;
+
+    /**补上data length**/
+    a[1] = (unsigned char)length-4;//为什么是减去4?此处的数据长度指的是数据区的长度
+
+    return length;
 }
 
 

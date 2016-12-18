@@ -34,6 +34,7 @@ class MyGroundStation: public QObject
         explicit MyGroundStation(QObject *parent=0);
         ~MyGroundStation();
         void decodeInitShake();
+        int encodeCmdAck(unsigned char msgID,unsigned char targetID,unsigned char *a);
         void handleData();
         void init(string device, unsigned int baudrate);
         int  checkData();
