@@ -43,8 +43,10 @@ class MyGroundStation: public QObject
 
    signals:
         void setQuadText(QString text);
+        void setNumCfmText(QString text);
    public slots:
         void setQuadNum(int);
+        void setNumCfm();
         int  js(){return test;}
    private:
         int quadNum;
@@ -67,7 +69,7 @@ class MyGroundStation: public QObject
     {
         p_mygs->readPoll();
         p_mygs->sendPoll();
-        usleep(100000);
+        usleep(10000);
     }
 }
 

@@ -3,8 +3,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QStackedWidget>
+#include <QListWidget>
 #include <QtWebKit/QWebFrame>
 #include <QtWebKit/QWebView>
+#include <QHBoxLayout>
 #include "MsgCode.h"
 #include "MyDataProcess.h"
 #include "MyGroundStation.h"
@@ -20,6 +23,7 @@ class MainWindow : public QMainWindow
 private:
     int quadNum;
     int location;
+    QLabel *q;
 public:
     explicit MainWindow(QWidget *parent = 0);
     void initConnect();

@@ -129,6 +129,14 @@ void MyGroundStation::handleData()
     }
 }
 
+void MyGroundStation::setNumCfm()
+{
+    quadNum=myQuad.size();
+    QString str;
+    str.setNum(quadNum);
+    emit setNumCfmText(QString("Info: ")+str+QString(" Quads Online! Num Confirm! Ready to Takeoff! "));
+}
+
 void MyGroundStation::byteHandler(const uint8_t in_data)
 {
 
@@ -147,7 +155,7 @@ void MyGroundStation::byteHandler(const uint8_t in_data)
         filter.recvIndex++;
         if(filter.recvIndex >= 2)												//已收到数据包长度位
         {
-            if(filter.recvIndex == filter.recvBuf[1]+6)     //在Zigbee点对点模式下，真实的数据长度为数据去长度+8，（前面4+后面2）长度收满,长度校验完成
+//            if(filter.recvIndex == filter.recvBuf[1]+6)     //在Zigbee点对点模式下，真实的数据长度为数据去长度+6,(前面4+后面2）长度收满,长度校验完成
             {
                 handleData();		//数据处理 校验 过滤 解码 消息发布等
                 cout<<"Finish Receive"<<endl;
