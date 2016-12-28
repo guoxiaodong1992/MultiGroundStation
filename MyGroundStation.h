@@ -44,9 +44,21 @@ class MyGroundStation: public QObject
    signals:
         void setQuadText(QString text);
         void setNumCfmText(QString text);
+        void setCruiseText(QString text);
+        void setTakingoffText(QString text);
+        void setTaskText(QString text);
+        void setRtlText(QString text);
+        void setLandingText(QString text);
+        void setStateText(QString text);
    public slots:
         void setQuadNum(int);
+        void setCruise();
+        void setTakingoff();
+        void setTask();
+        void setRtl();
+        void setLanding();
         void setNumCfm();
+        void setState();
         int  js(){return test;}
    private:
         int quadNum;

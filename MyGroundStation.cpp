@@ -17,6 +17,7 @@ MyGroundStation::MyGroundStation(QObject *parent):
     string serialName("/dev/ttyUSB0");
     int baudRate(115200);
     init(serialName,baudRate);
+    quadNum=1;
 }
 
 
@@ -129,14 +130,6 @@ void MyGroundStation::handleData()
     }
 }
 
-void MyGroundStation::setNumCfm()
-{
-    quadNum=myQuad.size();
-    QString str;
-    str.setNum(quadNum);
-    emit setNumCfmText(QString("Info: ")+str+QString(" Quads Online! Num Confirm! Ready to Takeoff! "));
-}
-
 void MyGroundStation::byteHandler(const uint8_t in_data)
 {
 
@@ -182,7 +175,7 @@ void MyGroundStation::decodeInitShake()
       quadNum=myQuad.size();
       QString str;
       str.setNum(quadNum);
-      emit setQuadText(QString("Info: Quad Add In: ")+str+QString(" !"));
+      emit setQuadText(QString("INFO: Quad Add In: ")+str+QString(" !"));
   }
   unsigned char b[50];//50 Reserved to be define
   int len;
@@ -225,5 +218,48 @@ int MyGroundStation::encodeCmdAck(unsigned char msgID,unsigned char targetID,uns
 
     return length;
 }
+
+
+
+void MyGroundStation::setNumCfm()
+{
+    QString str;
+    str.setNum(quadNum);
+    emit setNumCfmText(QString("INFO: ")+str+QString(" Quads Online! Num Confirm! Ready to Take off!"));
+}
+
+void MyGroundStation::setCruise()
+{
+    emit setCruiseText(QString("INFO: Cruse Start!"));
+}
+
+void MyGroundStation::setTakingoff()
+{
+    emit setTakingoffText(QString("INFO: Taking off!"));
+}
+
+void MyGroundStation::setTask()
+{
+    emit setTaskText(QString("INFO: Task Start!"));
+}
+
+void MyGroundStation::setLanding()
+{
+    emit setLandingText(QString("INFO: Landing!"));
+}
+
+void MyGroundStation::setRtl()
+{
+    emit setRtlText(QString("INFO: Return Home!"));
+}
+
+void MyGroundStation::setState()
+{
+    emit setStateText(QString("Ready to Take Off"));
+}
+
+
+
+
 
 
