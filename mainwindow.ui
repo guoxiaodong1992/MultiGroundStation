@@ -18,13 +18,13 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>0</y>
+      <y>-10</y>
       <width>621</width>
-      <height>391</height>
+      <height>401</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="page_2">
      <widget class="QWebView" name="webView">
@@ -46,7 +46,7 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>350</y>
+        <y>360</y>
         <width>99</width>
         <height>27</height>
        </rect>
@@ -98,7 +98,7 @@
       <property name="geometry">
        <rect>
         <x>130</x>
-        <y>350</y>
+        <y>360</y>
         <width>99</width>
         <height>27</height>
        </rect>
@@ -110,21 +110,21 @@
      <widget class="QPushButton" name="pushButtonCruise">
       <property name="geometry">
        <rect>
-        <x>10</x>
-        <y>310</y>
+        <x>130</x>
+        <y>300</y>
         <width>99</width>
         <height>27</height>
        </rect>
       </property>
       <property name="text">
-       <string>开始巡航</string>
+       <string>巡航</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButtonTask">
       <property name="geometry">
        <rect>
-        <x>130</x>
-        <y>310</y>
+        <x>10</x>
+        <y>330</y>
         <width>99</width>
         <height>27</height>
        </rect>
@@ -154,6 +154,32 @@
         <width>151</width>
         <height>31</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonMeet">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>300</y>
+        <width>99</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>会和</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonHover">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>330</y>
+        <width>99</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>悬停</string>
       </property>
      </widget>
     </widget>
@@ -230,6 +256,16 @@
       </property>
       <property name="text">
        <string>加载队形文件</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="widget" native="true">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>200</y>
+        <width>120</width>
+        <height>80</height>
+       </rect>
       </property>
      </widget>
     </widget>

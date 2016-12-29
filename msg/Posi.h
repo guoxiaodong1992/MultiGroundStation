@@ -24,20 +24,23 @@ struct Posi_
   typedef Posi_<ContainerAllocator> Type;
 
   Posi_()
-    : x(0.0)
+    : ID(0)
+    , x(0.0)
     , y(0.0)
-    , z(0.0)
-    , fi(0.0)  {
+    , z(0.0)  {
     }
   Posi_(const ContainerAllocator& _alloc)
-    : x(0.0)
+    : ID(0)
+    , x(0.0)
     , y(0.0)
-    , z(0.0)
-    , fi(0.0)  {
+    , z(0.0)  {
   (void)_alloc;
     }
 
 
+
+   typedef uint8_t _ID_type;
+  _ID_type ID;
 
    typedef float _x_type;
   _x_type x;
@@ -47,9 +50,6 @@ struct Posi_
 
    typedef float _z_type;
   _z_type z;
-
-   typedef float _fi_type;
-  _fi_type fi;
 
 
 
@@ -128,12 +128,12 @@ struct MD5Sum< ::zigbee::Posi_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "e7f9bc2b116f9a0efd4cf9e3a0c5a2a0";
+    return "742dc6b4aec9d9b6f108fe6461ef36cb";
   }
 
   static const char* value(const ::zigbee::Posi_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0xe7f9bc2b116f9a0eULL;
-  static const uint64_t static_value2 = 0xfd4cf9e3a0c5a2a0ULL;
+  static const uint64_t static_value1 = 0x742dc6b4aec9d9b6ULL;
+  static const uint64_t static_value2 = 0xf108fe6461ef36cbULL;
 };
 
 template<class ContainerAllocator>
@@ -152,10 +152,11 @@ struct Definition< ::zigbee::Posi_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "float32 x\n\
+    return "uint8 ID\n\
+\n\
+float32 x\n\
 float32 y\n\
 float32 z\n\
-float32 fi\n\
 ";
   }
 
@@ -174,10 +175,10 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
+      stream.next(m.ID);
       stream.next(m.x);
       stream.next(m.y);
       stream.next(m.z);
-      stream.next(m.fi);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -196,14 +197,14 @@ struct Printer< ::zigbee::Posi_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::zigbee::Posi_<ContainerAllocator>& v)
   {
+    s << indent << "ID: ";
+    Printer<uint8_t>::stream(s, indent + "  ", v.ID);
     s << indent << "x: ";
     Printer<float>::stream(s, indent + "  ", v.x);
     s << indent << "y: ";
     Printer<float>::stream(s, indent + "  ", v.y);
     s << indent << "z: ";
     Printer<float>::stream(s, indent + "  ", v.z);
-    s << indent << "fi: ";
-    Printer<float>::stream(s, indent + "  ", v.fi);
   }
 };
 

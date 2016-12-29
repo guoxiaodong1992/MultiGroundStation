@@ -45,10 +45,10 @@ struct ShapeConfig_
 
 
 
-   typedef int8_t _i_type;
+   typedef uint8_t _i_type;
   _i_type i;
 
-   typedef int8_t _j_type;
+   typedef uint8_t _j_type;
   _j_type j;
 
    typedef float _x_type;
@@ -63,7 +63,7 @@ struct ShapeConfig_
    typedef float _fi_type;
   _fi_type fi;
 
-   typedef int8_t _totol_uav_num_type;
+   typedef uint8_t _totol_uav_num_type;
   _totol_uav_num_type totol_uav_num;
 
 
@@ -143,12 +143,12 @@ struct MD5Sum< ::zigbee::ShapeConfig_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "5d3f4265dd95f24062ec4610cecbb8e6";
+    return "858d6740eb2ea1fbdaa9a1d557dd2fb2";
   }
 
   static const char* value(const ::zigbee::ShapeConfig_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x5d3f4265dd95f240ULL;
-  static const uint64_t static_value2 = 0x62ec4610cecbb8e6ULL;
+  static const uint64_t static_value1 = 0x858d6740eb2ea1fbULL;
+  static const uint64_t static_value2 = 0xdaa9a1d557dd2fb2ULL;
 };
 
 template<class ContainerAllocator>
@@ -167,15 +167,15 @@ struct Definition< ::zigbee::ShapeConfig_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "byte i\n\
-byte j\n\
+    return "uint8 i\n\
+uint8 j\n\
 \n\
 float32 x\n\
 float32 y\n\
 float32 z\n\
 float32 fi\n\
 \n\
-byte totol_uav_num\n\
+uint8 totol_uav_num\n\
 ";
   }
 
@@ -220,9 +220,9 @@ struct Printer< ::zigbee::ShapeConfig_<ContainerAllocator> >
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::zigbee::ShapeConfig_<ContainerAllocator>& v)
   {
     s << indent << "i: ";
-    Printer<int8_t>::stream(s, indent + "  ", v.i);
+    Printer<uint8_t>::stream(s, indent + "  ", v.i);
     s << indent << "j: ";
-    Printer<int8_t>::stream(s, indent + "  ", v.j);
+    Printer<uint8_t>::stream(s, indent + "  ", v.j);
     s << indent << "x: ";
     Printer<float>::stream(s, indent + "  ", v.x);
     s << indent << "y: ";
@@ -232,7 +232,7 @@ struct Printer< ::zigbee::ShapeConfig_<ContainerAllocator> >
     s << indent << "fi: ";
     Printer<float>::stream(s, indent + "  ", v.fi);
     s << indent << "totol_uav_num: ";
-    Printer<int8_t>::stream(s, indent + "  ", v.totol_uav_num);
+    Printer<uint8_t>::stream(s, indent + "  ", v.totol_uav_num);
   }
 };
 

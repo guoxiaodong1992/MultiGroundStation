@@ -4,6 +4,8 @@
 #include "msg/GPS.h"
 #include "msg/ShapeConfig.h"
 #include "msg/Posi.h"
+#include "msg/Attitude.h"
+
 
 using namespace zigbee;
 
@@ -15,6 +17,21 @@ using namespace zigbee;
 #define msgID_ShapeConfigAck    'C'
 #define msgID_TakeOff           'D'
 #define msgID_TakeOffAck        'D'
+
+#define msgID_Meet              'E'
+#define msgID_MeetAck           'E'
+#define msgID_Fly               'F'
+#define msgID_FlyAck            'F'
+#define msgID_Return            'G'
+#define msgID_ReturnAck         'G'
+#define msgID_Land              'H'
+#define msgID_LandAck           'H'
+#define msgID_Stop              'I'
+#define msgID_StopAck           'I'
+
+#define msgID_Posi              'U'
+#define msgID_Vel               'V'
+#define msgID_Attitude          'W'
 
 
 struct SDKFilter
@@ -36,16 +53,6 @@ struct msgHeader
   unsigned char reserve3;
 };
 
-int encode_InitShake(GPS &Tmp, unsigned char *a);
-
-int encode_CmdAck(unsigned char msgID,unsigned char targetID,unsigned char *a);//GS ACK
-
-void decode_InitShake(GPS &Tmp,unsigned char *a);//GS
-void decode_LocalFrame(GPS &Tmp,unsigned char *a);//GS
-void decode_ShapeConfig(ShapeConfig tmp,unsigned char *a);
-void decode_TakeOff(Posi tmp,unsigned char *a);
-
-unsigned char CountSum(unsigned char *a,int length);
-
-
 #endif
+
+

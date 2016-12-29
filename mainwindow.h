@@ -3,6 +3,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 #include <QStackedWidget>
 #include <QListWidget>
 #include <QtWebKit/QWebFrame>
@@ -39,6 +40,7 @@ signals:
 private:
     Ui::MainWindow *ui;
     MyGroundStation *myGrdStn;
+    QFileDialog *wr;
 };
 
 #endif // MAINWINDOW_H

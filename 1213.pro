@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT       += webkit network
+QT       += widgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,7 +16,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    MsgCode.cpp \
     MyDataProcess.cpp \
     MyGroundStation.cpp \
     MyQuad.cpp \
@@ -32,7 +32,8 @@ HEADERS  += \
     mainwindow.h \
     Queue.h \
     SerialHardDriver.h \
-    HardDriver.h
+    HardDriver.h \
+    msg/Attitude.h
 
 FORMS    += mainwindow.ui
 

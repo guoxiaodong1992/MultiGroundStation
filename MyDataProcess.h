@@ -20,15 +20,15 @@ void DecodeFloatData(float* f, unsigned char* buff);
 void EncodeS32Data(int32_t* f, unsigned char* buff);
 void DecodeS32Data(int32_t* f, unsigned char* buff);
 
-void EecodeS16Data(s16* f, unsigned char* buff);
+void EncodeS16Data(s16* f, unsigned char* buff);
 void DecodeS16Data(s16* f, unsigned char* buff);
 
-void EecodeU16Data(u16* f, unsigned char* buff);
+void EncodeU16Data(u16* f, unsigned char* buff);
 void DecodeU16Data(u16* f, unsigned char* buff);
 
-void EecodeU12Data(u16* f, unsigned char* buff);
+void EncodeU12Data(u16* f, unsigned char* buff);
 void DecodeU12Data(u16* f, unsigned char* buff);
 
-void EecodeU16to5Dec(u16* f, unsigned char* buff);
+void EncodeU16to5Dec(u16* f, unsigned char* buff);
 
 #endif

@@ -14,16 +14,33 @@
 #include "msg/GPS.h"
 #include "msg/ShapeConfig.h"
 #include "msg/Posi.h"
+#include "msg/Attitude.h"
+#include "MyDataProcess.h"
 
 using namespace zigbee;
+
+enum QuadStatus{
+    INIT_SHAKE=0,
+    BODY_FRAME,
+    TAKE_OFF,
+    CRUISE,
+    MISSION,
+    RETURN,
+    LANDIG,
+    LANDED
+};
 
 class MyQuad
 {
 public:
     MyQuad();
+    u16 zigbeeID;
     GPS global_position;
     Posi local_position;
-    int status;
+    Posi local_vel;
+    Attitude atti;
+    QuadStatus quadStatus;
+
 private:
 
 
