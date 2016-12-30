@@ -8,8 +8,9 @@
  */
 #include <iostream>
 #include "MyGroundStation.h"
+#include <string>
 
-
+using namespace std;
 
 MyGroundStation::MyGroundStation(QObject *parent):
     QObject(parent)
@@ -28,11 +29,6 @@ MyGroundStation::~MyGroundStation()
     delete m_hd;
 }
 
-void MyGroundStation::setQuadNum(int n)//Reserved to be deleted
-{
-    quadNum=n;
-    test+=1;
-}
 
 
 void MyGroundStation::init(string device, unsigned int baudrate)
@@ -185,6 +181,37 @@ void MyGroundStation::decodeInitShake()
   unsigned char *a=filter.recvBuf;
   DecodeU16Data(&zigbeeID,a+30);//30 is reserved to be changed to a var
   myQuad[zigbeeID].zigbeeID= zigbeeID;//UAV ID
+  switch(zigbeeID){
+    case 0x0100:
+      myQuad[zigbeeID].uavID=1;
+      break;
+    case 0x3E14:
+      myQuad[zigbeeID].uavID=2;
+      break;
+    case 0x7B28:
+      myQuad[zigbeeID].uavID=3;
+      break;
+    case 0x0004:
+      myQuad[zigbeeID].uavID=4;
+      break;
+    case 0x0005:
+      myQuad[zigbeeID].uavID=5;
+      break;
+    case 0x0006:
+      myQuad[zigbeeID].uavID=6;
+      break;
+    case 0x0007:
+      myQuad[zigbeeID].uavID=7;
+      break;
+    case 0x0008:
+      myQuad[zigbeeID].uavID=8;
+      break;
+    case 0x0009:
+      myQuad[zigbeeID].uavID=9;
+      break;
+    default:
+      break;
+  }
   DecodeDoubleData(&myQuad[zigbeeID].global_position.latitude,a+length);length+=8;
   DecodeDoubleData(&myQuad[zigbeeID].global_position.longitude,a+length);length+=8;
   DecodeDoubleData(&myQuad[zigbeeID].global_position.altitude,a+length);length+=8;
@@ -192,9 +219,10 @@ void MyGroundStation::decodeInitShake()
   if(myQuad.size()>quadNum)
   {
       quadNum=myQuad.size();
-      QString str;
+      QString str,str1;
       str.setNum(quadNum);
-      emit setConsoleText(QString("INFO: Quad Add In: ")+str+QString(" !"));
+      str1.setNum(myQuad[zigbeeID].uavID);
+      emit setConsoleText(QString("INFO: Quad Add In: ")+str+QString(" ! ID: ")+str1);
   }
   unsigned char b[50];//50 Reserved to be define
   int len;
@@ -214,7 +242,8 @@ void MyGroundStation::decodeBodyFrameAck()
     std::cout<<"RECEIVE BODY FRAME! ID： "<<hex<<zigbeeID<<std::endl;
     myQuad[zigbeeID].quadStatus= BODY_FRAME;//UAV ID
     QString str;
-    str.setNum(zigbeeID);
+    //待修改
+    str.setNum(myQuad[zigbeeID].uavID);
     emit setConsoleText(QString("INFO: Body Frame Ack,ID: ")+str+QString(" !"));
 }
 
@@ -297,11 +326,40 @@ int MyGroundStation::encodeLocalFrame(u16 zigbeeID,unsigned char *a)
   In general, We use 0xff when configurate
 */
 
-int encode_ShapeConfig(u16 zigbeeID,unsigned char *a)
+int MyGroundStation::encodeShapeConfig(ShapeConfig tmp,unsigned char uavID,unsigned char *a)
 {
+    tmp.i=leaderID;//补上leaderID，调用函数的时候没有写上去
 
+    int length = 0;
+
+    a[length] = 0xFD;  length++;							//包头
+    a[length] = 0;   	length++;								//data length
+
+  if(uavID!=0xff)
+  {
+    EncodeU16Data(&map_id[uavID].zigbeeID, a+length);length+=2;		//uav对应的zigbee短地址
+  }
+  else
+  {
+    a[length] = 0xff;  length++;
+    a[length] = 0xff; length++;
+  }
+
+    a[length] = msgID_ShapeConfig; length++;		//message ID
+    a[length] = tmp.i;  length++;   a[length] = tmp.j;   length++;
+    EncodeFloatData(&tmp.x, a+length);length+=4;
+    EncodeFloatData(&tmp.y, a+length);length+=4;
+    EncodeFloatData(&tmp.z, a+length);length+=4;
+    EncodeFloatData(&tmp.fi, a+length);length+=4;
+    a[length] = tmp.totol_uav_num;  length++;
+
+  /**补上data length**/
+  a[1] = (unsigned char)length-3;
+  ////计算校验和//////
+  a[length]=CountSum(a,length);length++;
+
+    return length;
 }
-
 
 //Posi数据只使用高度数据设置起飞高度
 int MyGroundStation::encodeTakeoff(u16 zigbeeID,unsigned char *a)
@@ -327,7 +385,7 @@ int MyGroundStation::encodeTakeoff(u16 zigbeeID,unsigned char *a)
 
   /**补上data length**/
   a[1] = (unsigned char)length-3;
-  ////计算校验和//////
+  ////计算校验和/////
   a[length]=CountSum(a,length);length++;
 
     return length;
@@ -400,9 +458,11 @@ void MyGroundStation::setNumCfm()
 {
     QString str;
     str.setNum(quadNum);
-    std::cout<<"Body Frame"<<std::endl;
+    emit setConsoleText(QString("INFO: ")+str+QString(" Quads Online! Num Confirm!"));
+    int num;
     for(int i=0;i<5;i++)
     {
+        num=0;
         map<u16,MyQuad>::iterator it=myQuad.begin();
         while(it!=myQuad.end())
         {
@@ -416,37 +476,56 @@ void MyGroundStation::setNumCfm()
                 std::cout<<' '<<hex<<u16(b[i]);
                 send_queue->EnQueue(b[i]);
             }
+                std::cout<<" Body Frame"<<std::endl;
             }
+            else num++;
             sleep(0.5);
             it++;
         }
     }
-    emit setConsoleText(QString("INFO: ")+str+QString(" Quads Online! Num Confirm! Ready!"));
+    str.setNum(num);
+    emit setConsoleText(QString("INFO: ")+str+QString(" Quads Body Frame ConFirmed! Ready!"));
+
+
+    map<u16,MyQuad>::iterator it=myQuad.begin();
+    leaderID=it->second.uavID;
+    while(it!=myQuad.end())
+    {
+        leaderID=it->second.uavID>leaderID?leaderID:it->second.uavID;
+        it++;
+    }
+    str.setNum(leaderID);
+    emit setLeaderText(str);//发送队形规划头机数字
+
+    it=myQuad.begin();
+    while(it!=myQuad.end())
+    {
+        if(it->second.uavID!=leaderID)
+        emit setComBoxText(QString(it->second.uavID));//发送从机下拉框数字
+        it++;
+
+    }
+
 }
+
 
 
 
 
 void MyGroundStation::setTakingoff()
 {
-    map<u16,MyQuad>::iterator it=myQuad.begin();
-    while(it!=myQuad.end())
-    {
 
-        if(it->second.quadStatus!=BODY_FRAME)
-        {
-        unsigned char b[50];//50 Reserved to be define
-        int len=encodeTakeoff(it->second.zigbeeID,b);
-        for(int i=0;i<len;i++)
-        {
-            std::cout<<std::endl;
-            std::cout<<' '<<hex<<u16(b[i]);
-            send_queue->EnQueue(b[i]);
-        }
-        }
-        it++;
+    u16 zigbeeID=0xffff;
+    unsigned char b[50];//50 Reserved to be define
+    int len=encodeTakeoff(zigbeeID,b);
+    for(int i=0;i<len;i++)
+    {
+        std::cout<<' '<<hex<<u16(b[i]);
+        send_queue->EnQueue(b[i]);
     }
+    std::cout<<" Taking off"<<std::endl;
     emit setConsoleText(QString("INFO: Taking off!"));
+    emit setStateText(QString("Take Off"));
 }
 
 void MyGroundStation::setMeet()
@@ -458,11 +537,12 @@ void MyGroundStation::setMeet()
     int len=encodeNoArguCmd(msgID,zigbeeID,b);
     for(int i=0;i<len;i++)
     {
-        std::cout<<std::endl;
         std::cout<<' '<<hex<<u16(b[i]);
         send_queue->EnQueue(b[i]);
     }
+    std::cout<<" Meeting"<<std::endl;
     emit setConsoleText(QString("INFO: Meet Start!"));
+    emit setStateText(QString("Meet"));
 
 }
 
@@ -474,17 +554,19 @@ void MyGroundStation::setCruise()
     int len=encodeNoArguCmd(msgID,zigbeeID,b);
     for(int i=0;i<len;i++)
     {
-        std::cout<<std::endl;
         std::cout<<' '<<hex<<u16(b[i]);
         send_queue->EnQueue(b[i]);
     }
-    emit setConsoleText(QString("INFO: Cruse Start!"));
+    std::cout<<" Cruising"<<std::endl;
+    emit setConsoleText(QString("INFO: Cruise Start!"));
+    emit setStateText(QString("Cruise"));
 }
 
 
 void MyGroundStation::setTask()
 {
     emit setConsoleText(QString("INFO: Task Start!"));
+    emit setStateText(QString("Task"));
 }
 
 void MyGroundStation::setHover()
@@ -495,11 +577,12 @@ void MyGroundStation::setHover()
     int len=encodeNoArguCmd(msgID,zigbeeID,b);
     for(int i=0;i<len;i++)
     {
-        std::cout<<std::endl;
         std::cout<<' '<<hex<<u16(b[i]);
         send_queue->EnQueue(b[i]);
     }
-    emit setConsoleText((QString("INFO: HOVER！")));
+    std::cout<<" Hovering"<<std::endl;
+    emit setConsoleText((QString("INFO: HOVER")));
+    emit setStateText(QString("Hover"));
 }
 
 void MyGroundStation::setLanding()
@@ -510,11 +593,12 @@ void MyGroundStation::setLanding()
     int len=encodeNoArguCmd(msgID,zigbeeID,b);
     for(int i=0;i<len;i++)
     {
-        std::cout<<std::endl;
         std::cout<<' '<<hex<<u16(b[i]);
         send_queue->EnQueue(b[i]);
     }
+    std::cout<<" Landing"<<std::endl;
     emit setConsoleText(QString("INFO: Landing!"));
+    emit setStateText(QString("Landing"));
 }
 
 void MyGroundStation::setRtl()
@@ -525,16 +609,12 @@ void MyGroundStation::setRtl()
     int len=encodeNoArguCmd(msgID,zigbeeID,b);
     for(int i=0;i<len;i++)
     {
-        std::cout<<std::endl;
         std::cout<<' '<<hex<<u16(b[i]);
         send_queue->EnQueue(b[i]);
     }
+     std::cout<<" Returning"<<std::endl;
     emit setConsoleText(QString("INFO: Return Home!"));
-}
-
-void MyGroundStation::setState()
-{
-    emit setStateText(QString("Ready to Take Off"));
+    emit setStateText(QString("Return"));
 }
 
 

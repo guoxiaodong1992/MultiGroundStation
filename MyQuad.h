@@ -23,6 +23,7 @@ enum QuadStatus{
     INIT_SHAKE=0,
     BODY_FRAME,
     TAKE_OFF,
+    MEET,
     CRUISE,
     MISSION,
     RETURN,
@@ -39,6 +40,7 @@ public:
     Posi local_position;
     Posi local_vel;
     Attitude atti;
+    int uavID;
     QuadStatus quadStatus;
 
 private:

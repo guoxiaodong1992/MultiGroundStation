@@ -5,6 +5,8 @@
  *  @brief
  *  Ground Station for Multi Quads. Header File.
  */
+#ifndef MY_GROUNDSTATION_
+#define MY_GROUNDSTATION_
 
 #include <iostream>
 #include <QObject>
@@ -43,6 +45,7 @@ class MyGroundStation: public QObject
         int encodeTakeoff(u16 zigbeeID,unsigned char *a);
         int encodeCmdAck(unsigned char msgID,u16 zigbeeID,unsigned char *a);
         int encodeNoArguCmd(unsigned char msgID,u16 zigbeeID,unsigned char *a);
+        int encodeShapeConfig(ShapeConfig tmp,unsigned char uavID,unsigned char *a);
         unsigned char CountSum(unsigned char *a,int length);
 
         void handleData();
@@ -52,10 +55,11 @@ class MyGroundStation: public QObject
         void sendPoll();
 
    signals:
+        void setLeaderText(QString text);
+        void setComBoxText(QString text);
         void setStateText(QString text);
         void setConsoleText(QString text);
    public slots:
-        void setQuadNum(int);
         void setMeet();
         void setCruise();
         void setTakingoff();
@@ -63,15 +67,25 @@ class MyGroundStation: public QObject
         void setRtl();
         void setLanding();
         void setNumCfm();
-        void setState();
         void setHover();
         int  js(){return test;}
    private:
         int quadNum;
         float test;
         float takeoffHeight;
+        int leaderID;
         map<u16,MyQuad> myQuad;
         unsigned char a[100];
+        MAP_ID map_id[10] = {	{0x00,0x0000},
+                              {0x01,0x0100},
+                              {0x02,0x3E14},
+                              {0x03,0x7B28},
+                              {0x04,0x0004},
+                              {0x05,0x0005},
+                              {0x06,0x0006},
+                              {0x07,0x0007},
+                              {0x08,0x0008},
+                              {0x09,0x0009}};
 
         pthread_t m_Tid;
         void byteHandler(const uint8_t in_data);
@@ -91,6 +105,8 @@ class MyGroundStation: public QObject
         usleep(100000);
     }
 }
+
+#endif
 
 
 

@@ -27,10 +27,11 @@ void MainWindow::initConnect()
     connect(ui->pushButtonLanding,SIGNAL(clicked()),this->myGrdStn,SLOT(setLanding()));//降落信息台信息
     connect(ui->pushButtonRtl,SIGNAL(clicked()),this->myGrdStn,SLOT(setRtl()));//返航信息台信息
     connect(ui->leftList,SIGNAL(currentRowChanged(int)),ui->stackedWidget,SLOT(setCurrentIndex(int)));
-    connect(ui->pushButtonNum,SIGNAL(clicked()),this->myGrdStn,SLOT(setState()));//状态栏信息显示
-    connect(this->myGrdStn,SIGNAL(setStateText(QString)),ui->textBrowserState,SLOT(append(QString)));//状态栏函数激发
+    connect(this->myGrdStn,SIGNAL(setStateText(QString)),ui->textBrowserState,SLOT(setText(QString)));//状态栏函数激发
     connect(this->myGrdStn,SIGNAL(setConsoleText(QString)),ui->textBrowser,SLOT(append(QString)));//信息台函数激发
-    connect(this->myGrdStn,SIGNAL(setBodyFrameText(QString)),ui->textBrowser,SLOT(append(QString)));//集体坐标确认信息
+    connect(this->myGrdStn,SIGNAL(setComBoxText(QString)),this,SLOT(addItemsComBox(QString)));//下拉框函数激发
+    connect(this->myGrdStn,SIGNAL(setLeaderText(QString)),ui->textBrowserLeader,SLOT(setText(QString)));//头机编队数字栏函数激发
+    connect(this,SIGNAL(setShapeText(QString)),ui->textBrowserShape,SLOT(append(QString)));//编队信息栏函数激发
     connect(ui->pushButtonNum,SIGNAL(clicked(bool)),ui->pushButtonTakingoff,SLOT(setDisabled(bool)));//数量确认之后允许起飞
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonRtl,SLOT(setDisabled(bool)));//起飞之后允许返航
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonHover,SLOT(setDisabled(bool)));//起飞之后允许悬停
@@ -38,6 +39,8 @@ void MainWindow::initConnect()
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonTask,SLOT(setDisabled(bool)));//起飞之后允许执行任务
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonCruise,SLOT(setDisabled(bool)));//起飞之后允许巡航
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonMeet,SLOT(setDisabled(bool)));//起飞之后允许会和
+    connect(ui->pushButtonShape,SIGNAL(clicked(bool)),this,SLOT(setShape()));//发送编队文件
+
 
 }
 
@@ -69,15 +72,38 @@ void MainWindow::initUi()
 
 
 void MainWindow::addJavaScriptObject()
-{;
+{
     this->ui->webView->page()->mainFrame()->addToJavaScriptWindowObject(QString("myGrdStn"),this->myGrdStn);
 }
 
-void MainWindow::slotTest()
+void MainWindow::setShape()
 {
-    std::cout<<"SUCCEED!"<<std::endl;
+     int uavID =ui->comboBoxFollower->currentText().toInt();
+     ShapeConfig sapConfig;
+     sapConfig.j=uavID;
+     sapConfig.x=ui->doubleSpinBoxShapeX->value();
+     sapConfig.y=ui->doubleSpinBoxShapeY->value();
+     sapConfig.z=ui->doubleSpinBoxShapeZ->value();
+     unsigned char b[50];//50 Reserved to be define
+     int len= myGrdStn->encodeShapeConfig(sapConfig,uavID,b);
+     for(int i=0;i<len;i++)
+     {
+         std::cout<<' '<<hex<<u16(b[i]);
+         myGrdStn->send_queue->EnQueue(b[i]);
+     }
+      std::cout<<" ShapConfig"<<std::endl;
+      QString str,strx,stry,strz;
+      str.setNum(uavID);
+      strx=QString("%1").arg(sapConfig.x);
+      stry= QString("%1").arg(sapConfig.y);
+      strz= QString("%1").arg(sapConfig.z);
+      emit setShapeText(QString("SetShape! ID: ")+str+QString(" X:")+strx+QString(" Y:")+stry+QString(" Z:")+strz);
 }
 
+void MainWindow::addItemsComBox(QString s)
+{
+    ui->comboBoxFollower->addItem(s);
+}
 
 MainWindow::~MainWindow()
 {

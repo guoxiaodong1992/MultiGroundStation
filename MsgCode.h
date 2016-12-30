@@ -33,6 +33,14 @@ using namespace zigbee;
 #define msgID_Vel               'V'
 #define msgID_Attitude          'W'
 
+ typedef struct MAP_ID
+{
+  unsigned char UAV_ID;
+  uint16_t zigbeeID;
+}MAP_ID;
+
+        //短地址为0x143E，则此处应该填写0x3E14
+
 
 struct SDKFilter
 {

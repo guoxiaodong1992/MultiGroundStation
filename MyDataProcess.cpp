@@ -83,6 +83,8 @@ void EncodeS16Data(s16* f, unsigned char* buff)
     buff[1] = (uint8_t)((*f)>>8);
 }
 
+
+
 //Name:	DecodeS16Data()
 //Describe:��buff�е�2���ֽ�ƴ��Ϊs16
 //Input:s16* f, unsigned char* buff

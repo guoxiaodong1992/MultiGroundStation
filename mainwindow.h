@@ -28,11 +28,14 @@ private:
 public:
     explicit MainWindow(QWidget *parent = 0);
     void initConnect();
-    void initUi();
+    void initUi();   
     ~MainWindow();
+signals:
+     void setShapeText(QString text);
 public slots:
-    void slotTest();
     void addJavaScriptObject();
+    void setShape();
+    void addItemsComBox(QString s);
 
 
 signals:
@@ -40,7 +43,6 @@ signals:
 private:
     Ui::MainWindow *ui;
     MyGroundStation *myGrdStn;
-    QFileDialog *wr;
 };
 
 #endif // MAINWINDOW_H
