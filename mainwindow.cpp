@@ -32,7 +32,8 @@ void MainWindow::initConnect()
     connect(this->myGrdStn,SIGNAL(setComBoxText(QString)),this,SLOT(addItemsComBox(QString)));//下拉框函数激发
     connect(this->myGrdStn,SIGNAL(setLeaderText(QString)),ui->textBrowserLeader,SLOT(setText(QString)));//头机编队数字栏函数激发
     connect(this,SIGNAL(setShapeText(QString)),ui->textBrowserShape,SLOT(append(QString)));//编队信息栏函数激发
-    connect(ui->pushButtonNum,SIGNAL(clicked(bool)),ui->pushButtonTakingoff,SLOT(setDisabled(bool)));//数量确认之后允许起飞
+    //connect(ui->pushButtonNum,SIGNAL(clicked(bool)),ui->pushButtonTakingoff,SLOT(setDisabled(bool)));//数量确认之后允许起飞
+    connect(this->myGrdStn,SIGNAL(setReadyTakeoffBool(bool)),ui->pushButtonTakingoff,SLOT(setEnabled(bool)));//全部队形发送成功之后可以起飞，未测试
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonRtl,SLOT(setDisabled(bool)));//起飞之后允许返航
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonHover,SLOT(setDisabled(bool)));//起飞之后允许悬停
     connect(ui->pushButtonTakingoff,SIGNAL(clicked(bool)),ui->pushButtonLanding,SLOT(setDisabled(bool)));//起飞之后允许降落
@@ -85,7 +86,7 @@ void MainWindow::setShape()
      sapConfig.y=ui->doubleSpinBoxShapeY->value();
      sapConfig.z=ui->doubleSpinBoxShapeZ->value();
      unsigned char b[50];//50 Reserved to be define
-     int len= myGrdStn->encodeShapeConfig(sapConfig,uavID,b);
+     int len= myGrdStn->encodeShapeConfig(sapConfig,0xff,b);//队形信息广播给所有uav
      for(int i=0;i<len;i++)
      {
          std::cout<<' '<<hex<<u16(b[i]);

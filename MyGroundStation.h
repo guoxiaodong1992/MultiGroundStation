@@ -41,6 +41,7 @@ class MyGroundStation: public QObject
         void decodeVel();
         void decodeAttitude();
         void decodeBodyFrameAck();
+        void decodeShapeConfigAck();
         int encodeLocalFrame(u16 zigbeeID,unsigned char *a);
         int encodeTakeoff(u16 zigbeeID,unsigned char *a);
         int encodeCmdAck(unsigned char msgID,u16 zigbeeID,unsigned char *a);
@@ -59,6 +60,7 @@ class MyGroundStation: public QObject
         void setComBoxText(QString text);
         void setStateText(QString text);
         void setConsoleText(QString text);
+        void setReadyTakeoffBool(bool b);
    public slots:
         void setMeet();
         void setCruise();

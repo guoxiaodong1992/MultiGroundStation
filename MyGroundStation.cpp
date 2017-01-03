@@ -165,8 +165,11 @@ void MyGroundStation::handleData()
             case msgID_LocalFrame:
             decodeBodyFrameAck();
             break;
+            case msgID_ShapeConfigAck:
+            decodeShapeConfigAck();
+            break;
             default:
-                break;
+            break;
         }
     }
 }
@@ -227,11 +230,13 @@ void MyGroundStation::decodeInitShake()
   unsigned char b[50];//50 Reserved to be define
   int len;
   len=encodeCmdAck(msgID_InitShakeAck,zigbeeID,b);
+  std::cout<<std::endl;
   for(int i=0;i<len;i++)
   {
       std::cout<<' '<<hex<<u16(b[i]);
       send_queue->EnQueue(b[i]);
   }
+   std::cout<<"InitShake Ack"<<std::endl;
 }
 
 void MyGroundStation::decodeBodyFrameAck()
@@ -239,7 +244,7 @@ void MyGroundStation::decodeBodyFrameAck()
     u16 zigbeeID;
     unsigned char *a=filter.recvBuf;
     DecodeU16Data(&zigbeeID,a+9);//9 is reserved to be changed to a var
-    std::cout<<"RECEIVE BODY FRAME! ID： "<<hex<<zigbeeID<<std::endl;
+    //std::cout<<"RECEIVE BODY FRAME! ID： "<<hex<<zigbeeID<<std::endl;
     myQuad[zigbeeID].quadStatus= BODY_FRAME;//UAV ID
     QString str;
     //待修改
@@ -247,6 +252,32 @@ void MyGroundStation::decodeBodyFrameAck()
     emit setConsoleText(QString("INFO: Body Frame Ack,ID: ")+str+QString(" !"));
 }
 
+
+void MyGroundStation::decodeShapeConfigAck()
+{
+
+    u16 zigbeeID;
+    unsigned char *a=filter.recvBuf;
+    DecodeU16Data(&zigbeeID,a+9);//9 is reserved to be changed to a var
+    QString str;
+    str.setNum(myQuad[zigbeeID].uavID);
+    emit setConsoleText(QString("INFO: Set Shape Ack,ID: ")+str+QString(" !"));
+    map<u16,MyQuad>::iterator it=myQuad.begin();
+    int num=0;
+    while(it!=myQuad.end())
+    {
+        if(it->second.quadStatus==READY)
+            num++;
+        it++;
+    }
+    if(num==quadNum)
+    {
+        emit setConsoleText(QString("READY TO TAKEOFF!"));
+        emit setReadyTakeoffBool(true);
+    }
+
+
+}
 
 void MyGroundStation::decodePosi()
 {
@@ -309,9 +340,9 @@ int MyGroundStation::encodeLocalFrame(u16 zigbeeID,unsigned char *a)
 
     a[length] = msgID_LocalFrame; length++;		//message ID
     //////数据拆分解码////////////
-    EncodeDoubleData(&myQuad[zigbeeID].global_position.latitude, a+length);length+=8;
-    EncodeDoubleData(&myQuad[zigbeeID].global_position.longitude, a+length);length+=8;
-    EncodeDoubleData(&myQuad[zigbeeID].global_position.altitude, a+length);length+=8;
+    EncodeDoubleData(&myQuad[map_id[leaderID].zigbeeID].global_position.latitude, a+length);length+=8;
+    EncodeDoubleData(&myQuad[map_id[leaderID].zigbeeID].global_position.longitude, a+length);length+=8;
+    EncodeDoubleData(&myQuad[map_id[leaderID].zigbeeID].global_position.altitude, a+length);length+=8;
   /**补上data length**/
     a[1] = (unsigned char)length-3;
   ////计算校验和//////
@@ -329,6 +360,7 @@ int MyGroundStation::encodeLocalFrame(u16 zigbeeID,unsigned char *a)
 int MyGroundStation::encodeShapeConfig(ShapeConfig tmp,unsigned char uavID,unsigned char *a)
 {
     tmp.i=leaderID;//补上leaderID，调用函数的时候没有写上去
+    tmp.totol_uav_num=quadNum;
 
     int length = 0;
 
@@ -459,8 +491,33 @@ void MyGroundStation::setNumCfm()
     QString str;
     str.setNum(quadNum);
     emit setConsoleText(QString("INFO: ")+str+QString(" Quads Online! Num Confirm!"));
+
+
+    map<u16,MyQuad>::iterator it=myQuad.begin();
+    leaderID=it->second.uavID;
+    while(it!=myQuad.end())
+    {
+        leaderID=it->second.uavID>leaderID?leaderID:it->second.uavID;
+        it++;
+    }
+    str.setNum(leaderID);
+    emit setLeaderText(str);//发送队形规划头机数字
+
+    it=myQuad.begin();
+    while(it!=myQuad.end())
+    {
+        if(it->second.uavID!=leaderID)
+        {
+        str.setNum(it->second.uavID);
+        emit setComBoxText(str);//发送从机下拉框数字
+        }
+        it++;
+
+    }
+
+
     int num;
-    for(int i=0;i<5;i++)
+    for(int i=0;i<1;i++)
     {
         num=0;
         map<u16,MyQuad>::iterator it=myQuad.begin();
@@ -479,7 +536,7 @@ void MyGroundStation::setNumCfm()
                 std::cout<<" Body Frame"<<std::endl;
             }
             else num++;
-            sleep(0.5);
+            sleep(1);
             it++;
         }
     }
@@ -487,24 +544,7 @@ void MyGroundStation::setNumCfm()
     emit setConsoleText(QString("INFO: ")+str+QString(" Quads Body Frame ConFirmed! Ready!"));
 
 
-    map<u16,MyQuad>::iterator it=myQuad.begin();
-    leaderID=it->second.uavID;
-    while(it!=myQuad.end())
-    {
-        leaderID=it->second.uavID>leaderID?leaderID:it->second.uavID;
-        it++;
-    }
-    str.setNum(leaderID);
-    emit setLeaderText(str);//发送队形规划头机数字
 
-    it=myQuad.begin();
-    while(it!=myQuad.end())
-    {
-        if(it->second.uavID!=leaderID)
-        emit setComBoxText(QString(it->second.uavID));//发送从机下拉框数字
-        it++;
-
-    }
 
 }
 

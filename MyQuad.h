@@ -22,6 +22,7 @@ using namespace zigbee;
 enum QuadStatus{
     INIT_SHAKE=0,
     BODY_FRAME,
+    READY,
     TAKE_OFF,
     MEET,
     CRUISE,
