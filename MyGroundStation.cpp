@@ -359,6 +359,9 @@ int MyGroundStation::encodeLocalFrame(u16 zigbeeID,unsigned char *a)
 
 int MyGroundStation::encodeShapeConfig(ShapeConfig tmp,unsigned char uavID,unsigned char *a)
 {
+    if(!tmp.j)
+    tmp.i=0;//前面的提示信息i为0
+    else
     tmp.i=leaderID;//补上leaderID，调用函数的时候没有写上去
     tmp.totol_uav_num=quadNum;
 

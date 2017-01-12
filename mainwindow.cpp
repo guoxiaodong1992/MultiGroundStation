@@ -65,8 +65,8 @@ void MainWindow::initUi()
     ui->webView->show();
 
     ui->leftList->insertItem(0,tr("Review"));
-    ui->leftList->insertItem(1,tr("Quads"));
-    ui->leftList->insertItem(2,tr("Plan"));
+    ui->leftList->insertItem(1,tr("Plan"));
+    ui->leftList->insertItem(2,tr("Quans Info"));
 
 
 }
@@ -79,12 +79,34 @@ void MainWindow::addJavaScriptObject()
 
 void MainWindow::setShape()
 {
-     int uavID =ui->comboBoxFollower->currentText().toInt();
+    static int firstSetShape;
+    if(!firstSetShape)//发送i=0,j=0队形提示消息
+    {
+     ShapeConfig sapConfig;
+     sapConfig.j=0;
+     sapConfig.x=0;
+     sapConfig.y=0;
+     sapConfig.z=0;
+     sapConfig.fi=0;
+     unsigned char b[50];//50 Reserved to be define
+     int len= myGrdStn->encodeShapeConfig(sapConfig,0xff,b);//队形信息广播给所有uav
+     for(int i=0;i<len;i++)
+     {
+         std::cout<<' '<<hex<<u16(b[i]);
+         myGrdStn->send_queue->EnQueue(b[i]);
+     }
+      std::cout<<" Before ShapConfig"<<std::endl;
+      firstSetShape=1;//标志位置为1
+    }
+    else
+    {
+    int uavID =ui->comboBoxFollower->currentText().toInt();
      ShapeConfig sapConfig;
      sapConfig.j=uavID;
      sapConfig.x=ui->doubleSpinBoxShapeX->value();
      sapConfig.y=ui->doubleSpinBoxShapeY->value();
      sapConfig.z=ui->doubleSpinBoxShapeZ->value();
+     sapConfig.fi=ui->doubleSpinBoxFi->value();
      unsigned char b[50];//50 Reserved to be define
      int len= myGrdStn->encodeShapeConfig(sapConfig,0xff,b);//队形信息广播给所有uav
      for(int i=0;i<len;i++)
@@ -99,6 +121,7 @@ void MainWindow::setShape()
       stry= QString("%1").arg(sapConfig.y);
       strz= QString("%1").arg(sapConfig.z);
       emit setShapeText(QString("SetShape! ID: ")+str+QString(" X:")+strx+QString(" Y:")+stry+QString(" Z:")+strz);
+    }
 }
 
 void MainWindow::addItemsComBox(QString s)
